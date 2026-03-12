@@ -57,6 +57,9 @@
 5. Padding/margin values not on the 8dp grid (valid: 4, 8, 16, 24, 32, 40, 48, 56, 64)
    → Round to nearest valid value: 10 → 8, 12 → 16, 20 → 24, 6 → 8, 3 → 4.
 
+5b. Inconsistent horizontal body padding across pages — any page whose outer `SingleChildScrollView` or `CustomScrollView` uses a horizontal padding other than `16`
+   → Replace with `padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16)`. All 12 pages must use the same horizontal value so content left/right edges align as the user navigates. Mismatched values (e.g. one page at `24`, another at `16`) create a visible layout jump.
+
 ### ACCESSIBILITY — fix immediately
 
 6. `IconButton` without a `tooltip:` parameter

@@ -143,6 +143,8 @@ A Flutter app runs on phones, tablets, foldables, and desktops. Your layout must
 
 **Use the 8dp spacing grid.** All padding, margins, gaps, and component sizes must be multiples of 8dp. Use 4dp only for fine adjustments within components. Never use arbitrary values like 13dp or 22dp.
 
+**Horizontal edge alignment must be consistent at 16dp.** The AppBar leading icon left edge, all page body content left/right edges, and the AppBar trailing action right edge must all land at 16dp from the screen edge. This means every page body scroll view uses `padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16)` — the same value on every page. Changing this value on even one page creates a visible misalignment when navigating between pages.
+
 **Choose navigation by screen width:**
 
 | Screen width | Navigation pattern | Flutter widget |
