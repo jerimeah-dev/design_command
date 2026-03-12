@@ -100,12 +100,12 @@ Body: `SingleChildScrollView` → `Padding(all: 16)` → `Column(crossAxisAlignm
 - `Slider(value: _step.toDouble(), min: 0, max: 5, divisions: 5, label: '\$_step', onChanged: (v) => setState(() => _step = v.toInt()))`
 - `SizedBox(height: 24)`
 - Section header "Dropdowns"
-- `DropdownButtonFormField<String>(decoration: InputDecoration(labelText: 'Framework', border: OutlineInputBorder()), value: _ddVal, items: ['Flutter','React Native','Xamarin','Ionic','Cordova'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(), onChanged: (v) => setState(() => _ddVal = v!))`
+- `DropdownButtonFormField<String>(decoration: InputDecoration(labelText: 'Framework', border: OutlineInputBorder()), initialValue: _ddVal, items: ['Flutter','React Native','Xamarin','Ionic','Cordova'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(), onChanged: (v) => setState(() => _ddVal = v!))`
 - `SizedBox(height: 16)`
 - `DropdownMenu<String>(label: Text('Accent color'), initialSelection: _dmVal, onSelected: (v) => setState(() => _dmVal = v ?? _dmVal), dropdownMenuEntries: ['Red','Blue','Green','Yellow','Purple','Orange'].map((s) => DropdownMenuEntry(value: s, label: s)).toList())`
 - `SizedBox(height: 24)`
 - Section header "Autocomplete"
-- `Autocomplete<String>(optionsBuilder: (TextEditingValue tv) { if (tv.text.isEmpty) return const Iterable.empty(); const options = ['Argentina','Australia','Brazil','Canada','China','Denmark','Egypt','Finland','France','Germany','India','Italy','Japan','Kenya','Mexico','Norway','Poland','Portugal','Spain','Sweden']; return options.where((s) => s.toLowerCase().startsWith(tv.text.toLowerCase())); }, fieldViewBuilder: (ctx, ctrl, fn, onSubmit) => TextField(controller: ctrl, focusNode: fn, onFieldSubmitted: (_) => onSubmit(), decoration: InputDecoration(labelText: 'Search country', prefixIcon: Icon(Icons.search_outlined))))`
+- `Autocomplete<String>(optionsBuilder: (TextEditingValue tv) { if (tv.text.isEmpty) return const Iterable.empty(); const options = ['Argentina','Australia','Brazil','Canada','China','Denmark','Egypt','Finland','France','Germany','India','Italy','Japan','Kenya','Mexico','Norway','Poland','Portugal','Spain','Sweden']; return options.where((s) => s.toLowerCase().startsWith(tv.text.toLowerCase())); }, fieldViewBuilder: (ctx, ctrl, fn, onSubmit) => TextField(controller: ctrl, focusNode: fn, onSubmitted: (_) => onSubmit(), decoration: InputDecoration(labelText: 'Search country', prefixIcon: Icon(Icons.search_outlined))))`
 
 ---
 
@@ -199,9 +199,9 @@ Body: `SingleChildScrollView` → `Padding(all: 16)` → `Column(crossAxisAlignm
 - `SizedBox(height: 24)`
 - Section header "Dialogs"
 - `Wrap(spacing: 8, runSpacing: 8, children:`:
-  - `OutlinedButton('Alert Dialog', onPressed: () => showDialog(context: context, builder: (_) => AlertDialog(title: Text('Discard changes?'), content: Text('This action cannot be undone.', style: textTheme.bodyMedium), actions: [TextButton('Cancel', onPressed: () => Navigator.pop(_)), FilledButton('Discard', onPressed: () => Navigator.pop(_))])))`
-  - `OutlinedButton('Simple Dialog', onPressed: () => showDialog(context: context, builder: (_) => SimpleDialog(title: Text('Choose size'), children: [SimpleDialogOption(onPressed: () => Navigator.pop(_), child: Text('Small', style: textTheme.bodyMedium)), SimpleDialogOption(onPressed: () => Navigator.pop(_), child: Text('Medium', style: textTheme.bodyMedium)), SimpleDialogOption(onPressed: () => Navigator.pop(_), child: Text('Large', style: textTheme.bodyMedium))])))`
-  - `OutlinedButton('Full-Screen Dialog', onPressed: () => showDialog(context: context, builder: (_) => Dialog.fullscreen(child: Scaffold(appBar: AppBar(title: Text('Full Screen'), leading: CloseButton()), body: Center(child: Text('Full-screen dialog content', style: textTheme.bodyLarge))))))`
+  - `OutlinedButton('Alert Dialog', onPressed: () => showDialog(context: context, builder: (dialogContext) => AlertDialog(title: Text('Discard changes?'), content: Text('This action cannot be undone.', style: textTheme.bodyMedium), actions: [TextButton('Cancel', onPressed: () => Navigator.pop(dialogContext)), FilledButton('Discard', onPressed: () => Navigator.pop(dialogContext))])))`
+  - `OutlinedButton('Simple Dialog', onPressed: () => showDialog(context: context, builder: (dialogContext) => SimpleDialog(title: Text('Choose size'), children: [SimpleDialogOption(onPressed: () => Navigator.pop(dialogContext), child: Text('Small', style: textTheme.bodyMedium)), SimpleDialogOption(onPressed: () => Navigator.pop(dialogContext), child: Text('Medium', style: textTheme.bodyMedium)), SimpleDialogOption(onPressed: () => Navigator.pop(dialogContext), child: Text('Large', style: textTheme.bodyMedium))])))`
+  - `OutlinedButton('Full-Screen Dialog', onPressed: () => showDialog(context: context, builder: (dialogContext) => Dialog.fullscreen(child: Scaffold(appBar: AppBar(title: Text('Full Screen'), leading: CloseButton(onPressed: () => Navigator.pop(dialogContext))), body: Center(child: Text('Full-screen dialog content', style: textTheme.bodyLarge))))))`
 - `SizedBox(height: 24)`
 - Section header "Bottom Sheet"
 - `Wrap(spacing: 8, runSpacing: 8, children:`:
@@ -250,7 +250,7 @@ Body: `SingleChildScrollView` → `Padding(all: 16)` → `Column(crossAxisAlignm
 - `Wrap(spacing: 8, runSpacing: 8, children: [ActionChip(label: Text('Share'), avatar: Icon(Icons.share_outlined, size: 16), onPressed: (){}), ActionChip(label: Text('Download'), avatar: Icon(Icons.download_outlined, size: 16), onPressed: (){}), ActionChip(label: Text('Bookmark'), avatar: Icon(Icons.bookmark_outline, size: 16), onPressed: (){}), ActionChip(label: Text('More'), onPressed: (){})])`
 - `SizedBox(height: 24)`
 - Section header "AssistChip"
-- `Wrap(spacing: 8, runSpacing: 8, children: [AssistChip(label: Text('Add to calendar'), avatar: Icon(Icons.calendar_today_outlined, size: 16), onPressed: (){}), AssistChip(label: Text('Set reminder'), avatar: Icon(Icons.alarm_outlined, size: 16), onPressed: (){}), AssistChip(label: Text('Get directions'), avatar: Icon(Icons.directions_outlined, size: 16), onPressed: (){})])`
+- `Wrap(spacing: 8, runSpacing: 8, children: [ActionChip(label: Text('Add to calendar'), avatar: Icon(Icons.calendar_today_outlined, size: 16), onPressed: (){}), ActionChip(label: Text('Set reminder'), avatar: Icon(Icons.alarm_outlined, size: 16), onPressed: (){}), ActionChip(label: Text('Get directions'), avatar: Icon(Icons.directions_outlined, size: 16), onPressed: (){})])`
 
 ---
 

@@ -101,3 +101,12 @@ Violations fixed: N
 
 (or: No violations found across all N files.)
 ```
+
+3c. `AssistChip` used anywhere in the codebase
+   → Replace every `AssistChip(...)` with `ActionChip(...)`. The parameter API is identical (`label:`, `avatar:`, `onPressed:`). `AssistChip` does not exist on Flutter < 3.3 and causes a compile error.
+
+3d. `showDialog` builder uses `_` as the context parameter name (e.g. `builder: (_) => ...`) AND `Navigator.pop(_)` is called inside it
+   → Rename the builder parameter from `_` to `dialogContext` (or `sheetContext` for bottom sheets), and update every `Navigator.pop(_)` in that builder to `Navigator.pop(dialogContext)`. Using `_` discards the context and makes it impossible to pop the dialog correctly.
+
+3e. `TextField` using `onFieldSubmitted:` parameter
+   → Replace with `onSubmitted:`. The parameter `onFieldSubmitted` does not exist on `TextField` — it only exists as a closure argument passed into `TextFormField`'s `fieldViewBuilder`. The correct `TextField` parameter is `onSubmitted`.

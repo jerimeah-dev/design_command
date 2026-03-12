@@ -84,3 +84,40 @@ Include this block verbatim in every agent prompt.
    // SnackBar(backgroundColor: Color(0xFF8B0000), ...)
    // SnackBar(backgroundColor: Theme.of(context).colorScheme.error, ...)  ← also wrong
    ```
+
+16. **`AssistChip` does not exist in Flutter < 3.3 — use `ActionChip` instead** — `AssistChip` was introduced in Flutter 3.3. It is not available in earlier SDK versions and will produce a compile error: *"The method 'AssistChip' isn't defined"*. Always use `ActionChip` with the same `label:`, `avatar:`, and `onPressed:` parameters — the APIs are identical.
+
+   ```dart
+   // ✅ Correct — works on all Flutter versions
+   ActionChip(label: Text('Add to calendar'), avatar: Icon(Icons.calendar_today_outlined, size: 16), onPressed: () {})
+
+   // ❌ Wrong — compile error on Flutter < 3.3
+   // AssistChip(label: Text('Add to calendar'), avatar: Icon(Icons.calendar_today_outlined, size: 16), onPressed: () {})
+   ```
+
+17. **`showDialog` builder context must be named, not `_`** — when calling `Navigator.pop()` inside a dialog's action buttons, always name the builder parameter (e.g. `dialogContext`) instead of discarding it as `_`. Using `_` and then calling `Navigator.pop(_)` passes the wrong type — `_` is a wildcard pattern, not a usable `BuildContext` variable.
+
+   ```dart
+   // ✅ Correct — named builder context used for Navigator.pop
+   showDialog(
+     context: context,
+     builder: (dialogContext) => AlertDialog(
+       actions: [
+         TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text('Cancel')),
+       ],
+     ),
+   );
+
+   // ❌ Wrong — _ is discarded; Navigator.pop(_) is a type error
+   // builder: (_) => AlertDialog(actions: [TextButton(onPressed: () => Navigator.pop(_), ...)])
+   ```
+
+18. **`TextField.onSubmitted`, not `onFieldSubmitted`** — the submission callback on `TextField` is named `onSubmitted`. The name `onFieldSubmitted` only exists as the `onFieldSubmitted` argument passed into `TextFormField`'s `fieldViewBuilder` closure — it is NOT a parameter on `TextField` itself. Using `onFieldSubmitted` on a `TextField` produces: *"The named parameter 'onFieldSubmitted' isn't defined"*.
+
+   ```dart
+   // ✅ Correct — TextField uses onSubmitted
+   TextField(onSubmitted: (_) => onSubmit())
+
+   // ❌ Wrong — onFieldSubmitted does not exist on TextField
+   // TextField(onFieldSubmitted: (_) => onSubmit())
+   ```
