@@ -41,7 +41,7 @@ class ThemeDropdown extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               const Icon(Icons.palette_outlined),
-              const SizedBox(width: 8),
+              const SizedBox(width: 16),
             ],
           ),
         );

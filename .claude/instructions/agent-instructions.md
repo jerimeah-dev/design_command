@@ -220,7 +220,7 @@ Apply all DART/FLUTTER PITFALLS rules.
       Text(_label(themeProvider.currentTheme), style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(width: 4),
       const Icon(Icons.palette_outlined),
-      const SizedBox(width: 8),
+      const SizedBox(width: 16),
     ],
   )
   ```

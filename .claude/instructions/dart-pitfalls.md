@@ -24,22 +24,22 @@ Include this block verbatim in every agent prompt.
 
    - **Body content:** All page `SingleChildScrollView` / `CustomScrollView` must use `padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16)`. Never use a different horizontal value (e.g. `24` or `8`) on one page while others use `16` — this creates a visible jump when navigating between pages.
    - **AppBar leading:** Flutter M3 automatically centers the `DrawerButton` / leading `IconButton` (24dp icon in 48dp touch target in 56dp slot) so the icon's left edge lands at 16dp. Do not override `leadingWidth` or add custom leading padding that would shift this.
-   - **AppBar trailing:** Flutter M3 AppBar wraps the `actions` list with `EdgeInsetsDirectional.only(end: 8.0)`. When using `PopupMenuButton` with `child:`, the Row's trailing `SizedBox` must be `width: 8` so that Flutter's 8dp + widget's 8dp = **16dp total** from the right edge.
+   - **AppBar trailing:** `PopupMenuButton` with `child:` renders as a raw `InkWell` — Flutter does NOT add any automatic trailing padding (unlike `IconButton` which gets its own padding). The Row's trailing `SizedBox` must be `width: 16` to match the body's 16dp right margin.
 
    ```dart
-   // ✅ Correct trailing — 8dp SizedBox + 8dp Flutter wrapper = 16dp from right edge
+   // ✅ Correct trailing — 16dp SizedBox aligns with body content right edge
    child: Row(
      mainAxisSize: MainAxisSize.min,
      children: [
        Text(_label(...)),
        const SizedBox(width: 4),
        const Icon(Icons.palette_outlined),
-       const SizedBox(width: 8), // ← 8dp here; Flutter adds another 8dp = 16dp total
+       const SizedBox(width: 16), // ← must be 16dp; no automatic padding is added
      ],
    )
 
-   // ❌ Wrong — 16dp SizedBox + 8dp Flutter wrapper = 24dp: too much right inset
-   // ❌ Wrong — 0dp SizedBox + 8dp Flutter wrapper = 8dp: too little, misaligned with body
+   // ❌ Wrong — 8dp leaves the icon only 8dp from the right edge, misaligned with body
+   // ❌ Wrong — 0dp clips the icon against the screen edge or status bar
    ```
 
 15. **Never place `DropdownButton` in `AppBar(actions: [...])` — use `PopupMenuButton` instead** — `DropdownButton` in AppBar actions does not receive Flutter's automatic trailing-edge padding that `IconButton` and `PopupMenuButton` get. This causes the icon/widget to misalign or clip against the screen edge, especially on devices with rounded corners or notches. Always use `PopupMenuButton<T>` for icon-triggered menus in AppBars:
