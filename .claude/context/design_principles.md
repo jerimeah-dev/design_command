@@ -28,7 +28,7 @@ ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.light)
 
 **Use roles, not raw values.** Every color has a role — `primary`, `surface`, `error`, `tertiary`. Use `Theme.of(context).colorScheme.primary`, never `Color(0xFF6750A4)` inside a widget. When the theme changes, your UI updates automatically.
 
-**Respect the pairing system.** Every surface color has a matching `onX` color for text and icons on top of it. `onPrimary` goes on `primary`. `onSurface` goes on `surface`. Never mix them across surfaces.
+**Respect the pairing system.** Every surface color has a matching `onX` color for text and icons on top of it. `onPrimary` goes on `primary`. `onSurface` goes on `surface`. `onErrorContainer` goes on `errorContainer`. Never mix them across surfaces — and never use `error` as a large background fill (it is designed for borders and icons, not surfaces); use `errorContainer` instead.
 
 **Reserve `primary` for what matters most.** Primary color draws the eye. Use it on the single most important interactive element per screen — the main action, the active state, the FAB. If everything is primary, nothing is.
 

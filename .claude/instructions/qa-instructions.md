@@ -31,7 +31,15 @@
 
 1. `Color(0xFF...)` or `Color(0x...)` literals anywhere in widget code
    → Replace with the semantically correct `Theme.of(context).colorScheme.*` role.
-   Common mappings: brand color → `primary`, background → `surface`, text → `onSurface`, error → `error`.
+   Common mappings: brand color → `primary`, background → `surface`, text → `onSurface`, error → `errorContainer`.
+
+1b. `SnackBar` with error intent using hardcoded colors (`Colors.red`, `Colors.redAccent`, `Colors.red.shadeN`, `Color(0xFF...)`) or the bare `colorScheme.error` role as `backgroundColor`
+   → Replace with the correct MD3 error container pair:
+   - `backgroundColor: Theme.of(context).colorScheme.errorContainer`
+   - Content text: `style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer)`
+   - Action label: `SnackBarAction(textColor: Theme.of(context).colorScheme.onErrorContainer, ...)`
+
+   **Why `errorContainer` and not `error`:** `colorScheme.error` is full-saturation and tuned for icons/borders, not large background fills. On a non-red seed theme (e.g., Blueprint/blue, Green, Purple) it produces a jarring, off-brand color with insufficient contrast against white `onError` text. `errorContainer` is the toned, accessible background variant designed specifically for this use case.
 
 2. Hardcoded `fontSize: <number>` or `TextStyle(fontSize: ...)`
    → Replace with `Theme.of(context).textTheme.<role>`.
@@ -39,6 +47,9 @@
 
 3. `context.watch<T>()` anywhere
    → Replace with `Consumer<T>(builder: (context, provider, child) => ...)`.
+
+3b. `DropdownButton` inside `AppBar(actions: [...])` or any `AppBar` action slot
+   → Replace with `PopupMenuButton<T>` using the same items and `onSelected` handler. `DropdownButton` in AppBar actions bypasses Flutter's automatic trailing-edge padding, causing the icon to misalign or clip against the screen edge. `PopupMenuButton` is the M3-correct widget: correct touch target, correct edge inset, correct overlay positioning.
 
 4. Custom `BoxShadow` inside `BoxDecoration` used for elevation
    → Replace with `Card(elevation: N)` or `Material(elevation: N)` using an M3 level (1–5).

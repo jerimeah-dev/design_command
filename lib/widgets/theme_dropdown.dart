@@ -23,21 +23,27 @@ class ThemeDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        return DropdownButton<ThemeNames>(
-          value: themeProvider.currentTheme,
-          icon: const Icon(Icons.palette_outlined),
-          underline: const SizedBox.shrink(),
-          onChanged: (value) {
-            if (value != null) {
-              context.read<ThemeProvider>().setTheme(value);
-            }
-          },
-          items: ThemeNames.values
-              .map((t) => DropdownMenuItem(
+        return PopupMenuButton<ThemeNames>(
+          tooltip: 'Switch theme',
+          onSelected: (value) => context.read<ThemeProvider>().setTheme(value),
+          itemBuilder: (context) => ThemeNames.values
+              .map((t) => PopupMenuItem<ThemeNames>(
                     value: t,
                     child: Text(_label(t)),
                   ))
               .toList(),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _label(themeProvider.currentTheme),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.palette_outlined),
+              const SizedBox(width: 8),
+            ],
+          ),
         );
       },
     );

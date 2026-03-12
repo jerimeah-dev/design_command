@@ -190,9 +190,16 @@ class FeedbackPage extends StatelessWidget {
                 OutlinedButton(
                   onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('Something went wrong'),
                       backgroundColor: colorScheme.errorContainer,
-                      action: SnackBarAction(label: 'Retry', onPressed: () {}),
+                      content: Text(
+                        'Something went wrong',
+                        style: TextStyle(color: colorScheme.onErrorContainer),
+                      ),
+                      action: SnackBarAction(
+                        label: 'Retry',
+                        textColor: colorScheme.onErrorContainer,
+                        onPressed: () {},
+                      ),
                     ),
                   ),
                   child: const Text('Error SnackBar'),

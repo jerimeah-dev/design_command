@@ -53,7 +53,7 @@ class _NavigationShowcasePageState extends State<NavigationShowcasePage> {
             Text('NavigationRail (preview)', style: textTheme.labelLarge!.copyWith(color: colorScheme.primary)),
             const SizedBox(height: 8),
             SizedBox(
-              height: 200,
+              height: 256,
               child: Card(
                 child: Row(
                   children: [

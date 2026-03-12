@@ -124,6 +124,8 @@ Apply all DART/FLUTTER PITFALLS rules before writing each file.
 
 **Note for NavigationShowcasePage:** The `DefaultTabController` wraps only the Column section for TabBar/TabBarView, not the whole Scaffold — the page itself has its own `Scaffold(AppBar(...))`.
 
+**Note for NavigationRail preview height:** When rendering `NavigationRail` as a preview inside a scrollable Column, the wrapping `SizedBox` height must be ≥ `(72 × destinationCount) + 40`. For 3 destinations use `SizedBox(height: 256)` minimum — never `height: 200`. Using too small a value causes "BOTTOM OVERFLOWED BY N PIXELS" because `NavigationRailLabelType.all` stacks icon + label for every destination and the rail does not scroll.
+
 **Note for StepperShowcasePage:** Guards for step bounds: `if (_vStep < 3) _vStep++` / `if (_vStep > 0) _vStep--`. Do not use `dart:math` — use conditional increments.
 
 **Import rule:** Each file imports only what it directly uses.
@@ -209,11 +211,25 @@ Apply all DART/FLUTTER PITFALLS rules.
 
 **theme_dropdown.dart** — `class ThemeDropdown extends StatelessWidget`
 - `const ThemeDropdown({super.key})`
-- `Consumer<ThemeProvider>` wrapping a `DropdownButton<ThemeNames>`
-- All 10 `ThemeNames` values as items
-- Item labels via `_label(ThemeNames t)` switch expression from themes.md
-- `onChanged`: `context.read<ThemeProvider>().setTheme(value!)`
-- Style: `icon: const Icon(Icons.palette_outlined)`, `underline: const SizedBox.shrink()`
+- `Consumer<ThemeProvider>` wrapping a `PopupMenuButton<ThemeNames>`
+- Use `child:` (not `icon:`) to display the active theme name alongside the icon:
+  ```dart
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(_label(themeProvider.currentTheme), style: Theme.of(context).textTheme.bodyMedium),
+      const SizedBox(width: 4),
+      const Icon(Icons.palette_outlined),
+      const SizedBox(width: 8),
+    ],
+  )
+  ```
+- `tooltip: 'Switch theme'`
+- `onSelected`: `context.read<ThemeProvider>().setTheme(value)`
+- `itemBuilder`: map all `ThemeNames.values` to `PopupMenuItem<ThemeNames>(value: t, child: Text(_label(t)))`
+- Item labels via private `_label(ThemeNames t)` switch expression from themes.md
+
+> **Why `PopupMenuButton` with `child:`, not `DropdownButton`:** `DropdownButton` in AppBar actions bypasses Flutter's trailing-edge padding, causing the icon to clip at the screen edge. `PopupMenuButton` solves alignment. Using `child:` (vs `icon:`) lets us display both the active theme name text and the palette icon together — matching the `DropdownButton` UX without its layout bugs.
 
 **version_switcher.dart** — `class VersionSwitcher extends StatelessWidget`
 - `const VersionSwitcher({super.key})`
