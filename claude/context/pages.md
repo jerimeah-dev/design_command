@@ -138,15 +138,13 @@ Body: `SingleChildScrollView` → `Padding(all: 16)` → `Column(crossAxisAlignm
 
 **Widget type:** `StatefulWidget` (needs: `_vStep = 0`, `_hStep = 0`)
 
-**⚠️ STEPPER LAYOUT RULE:** Flutter's `Stepper` widget (both vertical and horizontal) uses `Expanded + ListView` internally. It MUST have a bounded-height parent. **NEVER** place `Stepper` inside `SingleChildScrollView` — this causes a `RenderBox was not laid out` crash. Use a `Column` body and wrap each `Stepper` in `Expanded`.
-
 **StepperShowcasePage:** `Scaffold(AppBar("Stepper"))`
-Body: `Column(crossAxisAlignment: start)` — NO SingleChildScrollView:
+Body: `SingleChildScrollView` → `Column`:
 
-- `Padding(fromLTRB(16,16,16,8))` + Section header "Vertical Stepper"
-- `Expanded(flex: 3, child: Stepper(type: StepperType.vertical, currentStep: _vStep, onStepContinue: () { if (_vStep < 3) setState(() => _vStep++); }, onStepCancel: () { if (_vStep > 0) setState(() => _vStep--); }, steps: [Step(title: Text('Account'), content: Text('Enter your email and password.', style: textTheme.bodyMedium)), Step(title: Text('Profile'), content: Text('Add your display name and avatar.', style: textTheme.bodyMedium)), Step(title: Text('Preferences'), content: Text('Choose your notification settings.', style: textTheme.bodyMedium)), Step(title: Text('Confirm'), content: Text('Review and submit your choices.', style: textTheme.bodyMedium))]))`
-- `Padding(fromLTRB(16,16,16,8))` + Section header "Horizontal Stepper"
-- `Expanded(flex: 2, child: Stepper(type: StepperType.horizontal, currentStep: _hStep, onStepContinue: () { if (_hStep < 2) setState(() => _hStep++); }, onStepCancel: () { if (_hStep > 0) setState(() => _hStep--); }, steps: [Step(title: Text('Details'), content: SizedBox.shrink()), Step(title: Text('Payment'), content: SizedBox.shrink()), Step(title: Text('Review'), content: SizedBox.shrink())]))`
+- `Padding(all: 16)` + Section header "Vertical Stepper"
+- `Stepper(type: StepperType.vertical, currentStep: _vStep, onStepContinue: () { if (_vStep < 3) setState(() => _vStep++); }, onStepCancel: () { if (_vStep > 0) setState(() => _vStep--); }, steps: [Step(title: Text('Account'), content: Text('Enter your email and password.', style: textTheme.bodyMedium)), Step(title: Text('Profile'), content: Text('Add your display name and avatar.', style: textTheme.bodyMedium)), Step(title: Text('Preferences'), content: Text('Choose your notification settings.', style: textTheme.bodyMedium)), Step(title: Text('Confirm'), content: Text('Review and submit your choices.', style: textTheme.bodyMedium))])`
+- `Padding(all: 16)` + Section header "Horizontal Stepper"
+- `Stepper(type: StepperType.horizontal, currentStep: _hStep, onStepContinue: () { if (_hStep < 2) setState(() => _hStep++); }, onStepCancel: () { if (_hStep > 0) setState(() => _hStep--); }, steps: [Step(title: Text('Details'), content: SizedBox.shrink()), Step(title: Text('Payment'), content: SizedBox.shrink()), Step(title: Text('Review'), content: SizedBox.shrink())])`
 
 ---
 

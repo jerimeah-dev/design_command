@@ -1,12 +1,3 @@
-# Bootstrap Templates
-
-Use these templates to create missing project files. Write them verbatim using the Write tool.
-
----
-
-## Template: `.claude/context/design_principles.md`
-
-````
 # Material Design 3 — Flutter Design Guidelines
 
 You are designing a Flutter app. These are your design laws. Follow them at all times.
@@ -176,20 +167,24 @@ Use `NavigationDrawer` persistently on expanded screens — never collapse it be
 
 Images are layout citizens. They must follow the same grid, component, and accessibility rules as every other element.
 
-**Follow the 8dp grid.** All image margins, padding, and spacing must be multiples of 8dp.
+**Follow the 8dp grid.** All image margins, padding, and spacing must be multiples of 8dp. Images are not exempt from the spacing grid — misaligned images break visual rhythm just as misaligned text does.
 
-**Respect component layout.** Place images consistently inside Cards, Buttons, ListTiles, and other M3 components. Never offset or manually nudge images outside a component's layout rules.
+**Respect component layout.** Place images consistently inside Cards, Buttons, ListTiles, and other M3 components. Never offset or manually nudge images outside a component's layout rules using arbitrary `Positioned`, `Transform`, or negative padding hacks.
 
-**Maintain responsive alignment.** Use `Flexible`, `Expanded`, or `FittedBox` — never hardcode image dimensions.
+**Maintain responsive alignment.** Images must scale and align predictably across phones, tablets, and desktops. Use `Flexible`, `Expanded`, or `FittedBox` — never hardcode image dimensions that break on other screen sizes.
 
 ```dart
 FittedBox(fit: BoxFit.cover, child: Image.asset(...))
 Expanded(child: AspectRatio(aspectRatio: 16 / 9, child: Image.network(...)))
 ```
 
-**Support text scaling.** Images must not overlap or misalign at 200% text scale.
+**Pair with text or icons intentionally.** Images that convey meaning must align with their labels or icons. Never rely on image position alone to communicate information — always pair a meaningful image with a visible label or accessible semantic.
 
-**Accessibility alignment.** Semantic images must have `Semantics(label: '...')`. Decorative images must use `Semantics(excludeSemantics: true)`.
+**Support text scaling.** Images must not overlap or misalign when the user's text size increases up to 200%. Use flexible layout — `Flexible`, `Expanded`, `IntrinsicHeight` — so enlarged text reflows around images rather than colliding with them.
+
+**Respect motion & transitions.** Animated images (e.g., `Hero` shared-element transitions) must maintain alignment during entry, exit, and mid-transition states. Set `Hero` tags on both source and destination widgets and verify alignment holds at every breakpoint.
+
+**Accessibility alignment.** Semantic images (those that convey meaning) must stay visually aligned with their captions, labels, or interactive elements — misalignment breaks the relationship for low-vision users. Decorative images must use `Semantics(excludeSemantics: true)` and must not disrupt grid alignment.
 
 ```dart
 // Semantic image — carries meaning
@@ -205,34 +200,38 @@ Semantics(excludeSemantics: true, child: Image.asset('assets/bg_texture.png'))
 
 When Flutter provides an M3 component, always use it. Never build a custom replacement unless the M3 component genuinely cannot meet the requirement.
 
-**Buttons** — choose by hierarchy:
-- `FilledButton` — primary action, one per screen region maximum
-- `FilledTonalButton` — secondary action
-- `ElevatedButton` — low-emphasis, needs to stand out from background
-- `OutlinedButton` — medium-emphasis, often paired with FilledButton
-- `TextButton` — lowest emphasis, tertiary or inline actions only
+**Buttons** have five levels of emphasis. Choose by hierarchy, not aesthetics:
+- `FilledButton` — The primary action. One per screen region maximum.
+- `FilledTonalButton` — Secondary action when Filled is too dominant.
+- `ElevatedButton` — Low-emphasis action that needs to stand out from the background.
+- `OutlinedButton` — Medium-emphasis, often paired with a FilledButton.
+- `TextButton` — Lowest emphasis. Tertiary or inline actions only.
 
-**Cards** — default to `elevated`. Tappable cards must respond to hover, focus, and press states.
+**FloatingActionButton** is the primary or most frequent action on the screen. Use one per screen. It must not permanently obscure content — animate it out of the way when a bottom sheet rises.
 
-**Dialogs** — blocking decisions only, max two actions, always dismissible.
+**Cards** come in three variants — `elevated`, `filled`, `outlined`. Default to `elevated`. If a card is tappable, it must respond to hover, focus, and press states. Never make a tappable card that looks static.
 
-**TextFields** — always show a persistent label. Error state requires both `errorText` and the `error` color on the border.
+**Dialogs** are for critical, blocking decisions only. Use them sparingly. Maximum two actions. Always dismissible by tapping the scrim or pressing Escape/Back.
+
+**TextFields** always show a persistent label — never placeholder text alone. The error state requires both `errorText` below the field and the `error` color on the border.
 
 ---
 
 ## Accessibility
 
-**Touch targets:** Every interactive element must be at least 48×48dp.
+Accessibility is not a feature. It is a baseline requirement. Every screen must meet all of these.
 
-**Contrast:** Body text 4.5:1, large text (18sp+) 3:1. `ColorScheme.fromSeed` meets these automatically.
+**Touch targets:** Every interactive element must be at least 48×48dp. If the visual size is smaller, wrap it in a `SizedBox` or use `MaterialTapTargetSize.padded`. Space adjacent targets at least 8dp apart.
 
-**Semantics:** Every interactive element needs a semantic label. Icon-only buttons: `IconButton(tooltip: '...')`.
+**Contrast:** Body text must meet 4.5:1 contrast against its background. Large text (18sp+) and UI component outlines must meet 3:1. `ColorScheme.fromSeed` meets these requirements automatically — do not override colors in ways that break contrast.
 
-**Text scaling:** Never hardcode font sizes. Test every screen at 200%.
+**Semantics:** Every interactive element needs a semantic label. Icon-only buttons must have `Semantics(label: '...')` or `IconButton(tooltip: '...')`. Images that carry meaning need `Semantics(label: '...')`. Purely decorative images need `Semantics(excludeSemantics: true)`.
 
-**Focus order:** Tab/directional focus must flow in logical reading order.
+**Text scaling:** Never hardcode font sizes. Never clip text containers without a scroll fallback. Test every screen at 200% text scale.
 
-**Motion sensitivity:** Always check `MediaQuery.disableAnimations` and skip non-essential animations when true.
+**Focus order:** Ensure tab/directional focus flows in logical reading order. Use `FocusTraversalGroup` to control focus scope when needed. Never suppress the visible focus indicator.
+
+**Motion sensitivity:** Always check `MediaQuery.disableAnimations` and skip non-essential animations when it is true.
 
 ---
 
@@ -244,69 +243,18 @@ When Flutter provides an M3 component, always use it. Never build a custom repla
 | Read colors from `Theme.of(context).colorScheme` | Use `Color(0xFF...)` inside widget trees |
 | Use the M3 text theme for all type styles | Hardcode font sizes |
 | Use 8dp multiples for all spacing | Use arbitrary spacing values |
-| Use tonal elevation via `elevation:` param | Write custom `BoxShadow` decorations |
-| Assign shapes by component role | Apply one corner radius to everything |
+| Use tonal elevation via Flutter's `elevation:` param | Write custom `BoxShadow` decorations |
+| Assign shapes by component role (buttons = pill, cards = medium) | Apply one corner radius to everything |
 | Provide both `theme` and `darkTheme` | Ship a light-only app |
 | Give every interactive element a 48×48dp touch target | Make tap targets smaller than 48dp |
 | Add semantic labels to all interactive and meaningful elements | Leave icon-only buttons without labels |
 | Respect `MediaQuery.disableAnimations` | Play animations for users who have disabled them |
-| Use adaptive navigation based on screen width | Lock a single navigation pattern across all sizes |
+| Use `NavigationBar`, `NavigationRail`, or `NavigationDrawer` based on screen width | Lock a single navigation pattern across all screen sizes |
 | Use Flutter's built-in M3 components | Build custom replacements when M3 components exist |
-| Animate with purpose | Add decorative animations with no informational value |
-````
-
----
-
-## Template: `.claude/context/naming_and_rules.md`
-
-````
-# Naming Conventions & Coding Rules
-
-## File Naming
-
-| Item | Convention | Example |
-|---|---|---|
-| Feature folder | `snake_case` | `create_post/` |
-| Screen file | `{className_snake}.{folderName}.dart` | `create_post_page.create_post.dart` |
-| Widget in feature folder | `{className_snake}.{folderName}.dart` | `media_picker_widget.create_post.dart` |
-| Shared widget (`lib/widgets/`) | `{className_snake}.dart` | `theme_dropdown.dart` |
-| Class name | `PascalCase` | `CreatePostPage` |
-| StatefulWidget + State | Both in the same file | 1 file for both classes |
-
----
-
-## Provider Rules
-
-- **Forbidden:** `context.watch<T>()` — never use this anywhere
-- **Reactive UI:** `Consumer<T>(builder: (context, provider, child) => ...)` or `Selector<T, R>`
-- **Event handlers only:** `context.read<T>().method()` — does not cause rebuilds
-- Pages do NOT subscribe to `ThemeProvider`. They call `Theme.of(context)` which rebuilds automatically when `Consumer<ThemeProvider>` in `app.dart` rebuilds `MaterialApp`.
-
----
-
-## State Management
-
-- `provider` package only — no Riverpod, Bloc, GetX, or any other package
-- `ThemeProvider extends ChangeNotifier` — holds `ThemeNames _currentTheme`
-- `VersionProvider extends ChangeNotifier` — holds `int _current` and `final int total`
-- Both registered in `MultiProvider` at the root (`app.dart`)
-
----
-
-## Layout Rules
-
-- **8dp spacing grid** — all padding and margins must be multiples of 8dp (use 4dp only for fine adjustments within components)
-- No arbitrary values like 13dp, 22dp, 37dp — always 8, 16, 24, 32, 40, 48, 56, 64
-- Touch targets: minimum 48×48dp for every interactive element
-- Semantic labels on all icon-only buttons: `IconButton(tooltip: '...')` or `Semantics(label: '...')`
-- Respect `MediaQuery.of(context).disableAnimations` before playing any animation
-
----
-
-## Color & Typography Rules
-
-- No hardcoded colors in widget trees — always `Theme.of(context).colorScheme.*`
-- No hardcoded font sizes — always `Theme.of(context).textTheme.*`
-- Theme system uses `ColorScheme.fromSeed()` — never manually assembled palettes
-- Every surface color has an `onX` pair — `onPrimary` on `primary`, `onSurface` on `surface`, never mixed
-````
+| Animate with purpose — every motion must communicate something | Add decorative animations with no informational value |
+| Use 8dp multiples for all image margins, padding, and spacing | Apply arbitrary image offsets outside the spacing grid |
+| Place images inside M3 component layout rules (Card, ListTile, etc.) | Manually nudge or offset images outside component bounds |
+| Use `Flexible`, `Expanded`, or `FittedBox` to keep images responsive | Hardcode image dimensions that break at other screen sizes or text scales |
+| Add `Semantics(label: '...')` to meaningful images | Leave meaningful images without semantic labels |
+| Use `Semantics(excludeSemantics: true)` for decorative images | Let decorative images pollute the accessibility tree |
+| Verify `Hero` alignment holds at entry, exit, and all breakpoints | Ship shared-element transitions that misalign mid-animation |

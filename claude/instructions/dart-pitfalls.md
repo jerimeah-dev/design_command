@@ -16,5 +16,3 @@ Include this block verbatim in every agent prompt.
 8. **8dp spacing grid** — padding/margin values must be multiples of 8 (4dp only for micro-adjustments inside components).
 9. **`@override`** on every overridden method (`build`, `createState`, `initState`, `dispose`).
 10. **Semantic labels** on all icon-only buttons: `IconButton(tooltip: '...')`.
-11. **`Stepper` requires bounded height** — Flutter's `Stepper` widget (both `StepperType.vertical` and `StepperType.horizontal`) uses `Expanded + ListView` internally. **Never** place a `Stepper` inside `SingleChildScrollView` — this causes a `RenderBox was not laid out` crash at runtime. Always give `Stepper` a bounded-height parent: use a `Column` body (not wrapped in `SingleChildScrollView`) and wrap each `Stepper` in `Expanded` (e.g. `Expanded(flex: 3, child: Stepper(...))`).
-12. **`DropdownButtonFormField` uses `initialValue` not `value`** — the `value:` parameter was deprecated in Flutter 3.33+. Use `initialValue:` instead (e.g. `initialValue: _ddVal`). Note: `initialSelection:` is for `DropdownMenu`, not `DropdownButtonFormField`.
